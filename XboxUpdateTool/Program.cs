@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Net;
 using System.Net.Http;
-using Update;
+using XboxUpdateTool.Models;
 
 namespace XboxUpdateTool
 {
@@ -47,6 +47,27 @@ namespace XboxUpdateTool
                 await downloader.DownloadFileTaskAsync(updatepath, file.Name + "_" + update.ContentId);
                 Console.WriteLine($"Downloaded {file.Name} as {file.Name}_{update.ContentId}");
             }  
+        }
+
+        static async Task GetCacheGroupID(string authtoken)
+        {
+            Uri GetCacheGroupIDUri = new Uri("https://update.xboxlive.com/GetCacheGroupId");
+            HttpClient client = new HttpClient();
+            client.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", authtoken);
+            client.DefaultRequestHeaders.TryAddWithoutValidation("Content-Type", "application/json");
+            HttpResponseMessage httpResponse = await client.GetAsync(GetCacheGroupIDUri);
+            if (httpResponse.IsSuccessStatusCode)
+            {
+                string temp = httpResponse.Content.ReadAsStringAsync().Result;
+                var cachejson = CacheGroupId.FromJson(temp);
+                if(cachejson.PurpleCacheGroupId != "")
+                {
+                    Console.WriteLine($"Cache ID Found: {cachejson.PurpleCacheGroupId}");
+
+                }
+
+            }
+
         }
 
         async static Task CheckForUpdateAsync(string authtoken, string contentid)

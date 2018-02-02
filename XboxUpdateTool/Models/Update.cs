@@ -1,5 +1,5 @@
 ﻿
-namespace Update
+namespace XboxUpdateTool.Models
 {
     using System.Collections.Generic;
 
