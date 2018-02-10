@@ -21,8 +21,18 @@ namespace XboxUpdateTool
             }
             else
             {
-                string authtoken = args[0];
-                CheckForUpdateAsync(authtoken, args[1]).Wait();
+                if (!System.IO.File.Exists(args[0]))
+                {
+                    string authtoken = args[0];
+                    CheckForUpdateAsync(authtoken, args[1]).Wait();
+                }
+                else
+                {
+                    string authtoken = System.IO.File.ReadAllText(args[0]);
+                    CheckForUpdateAsync(authtoken, args[1]).Wait();
+
+                }
+
             }
             
         }
@@ -33,8 +43,6 @@ namespace XboxUpdateTool
             Console.WriteLine($"Update Version: {update.TargetVersionId}\nUpdate Type: {update.UpdateType}");
 
         }
-
-
         static async Task DownloadUpdateAsync(UpdateXboxLive update)
         {
             WebClient downloader = new WebClient();
